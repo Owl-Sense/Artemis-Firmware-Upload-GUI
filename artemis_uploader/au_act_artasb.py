@@ -72,13 +72,15 @@ class AUxArtemisBurnBootloader(AxAction):
                     "--version", "0x0", \
                     "--load-address-wired", "0xC000", \
                     "-i", "6", \
-                    "-v", \
                     "-clean", "1" ]
 
         # Call the ambiq command
         try:
             asb_main()
 
+        except SystemExit as e:
+            #print(f"Program exited with status code: {e.code}")
+            return e.code
         except Exception:
             return 1
 

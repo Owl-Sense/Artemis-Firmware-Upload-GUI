@@ -183,6 +183,7 @@ class AUxWorker(object):
         self.message('\n' + ('_'*70) + "\n")
 
         # Job details
+        #print("actionID: " + str(job.action_id))
         self.message(self._actions[job.action_id].name + "\n\n")
         for key in sorted(job.keys()):
             self.message(key.capitalize() + ":\t" + str(job[key]) + '\n')
@@ -221,6 +222,7 @@ class AUxWorker(object):
                 job = inputQueue.get()
 
                 status = self.dispatch_job(job)
+                #print("job status" + str(status))
 
                 # job is finished - let UX know -pass status, action type and job id
                 self._cb_function(self.TYPE_FINISHED, status, job.action_id, job.job_id)

@@ -447,13 +447,13 @@ def upload(args, verboseprint):
             if(loadSuccess == True):
                 print("Tries =", loadTries)
                 print('Upload complete')
-                exit()
+                exit(0)
             else:
                 print("Fail")
             
     print("Tries =", loadTries)
     print("Upload failed")
-    exit()
+    exit(1)
 
 
 #******************************************************************************

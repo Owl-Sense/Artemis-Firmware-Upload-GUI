@@ -208,6 +208,8 @@ class MainWindow(QMainWindow):
         self.baud_combobox = QComboBox()
         baud_label.setBuddy(self.baud_combobox)
         self.update_baud_rates()
+        self.baud_combobox.hide()
+        baud_label.hide()
 
         # Upload Button
         myFont = QFont()
@@ -216,10 +218,17 @@ class MainWindow(QMainWindow):
         self.upload_btn.setFont(myFont)
         self.upload_btn.pressed.connect(self.on_upload_btn_pressed)
 
+        #Upload Both
+        self.uploadBoth_btn = QPushButton(self.tr('  Upload Bootloader and Firmware  '))
+        self.uploadBoth_btn.setFont(myFont)
+        self.uploadBoth_btn.pressed.connect(
+            self.on_update_bootloader_btn_pressed)
+
         # Upload Button
         self.updateBootloader_btn = QPushButton(self.tr(' Update Bootloader '))
         self.updateBootloader_btn.pressed.connect(
             self.on_update_bootloader_btn_pressed)
+        self.updateBootloader_btn.hide()
 
         # Messages Bar
         messages_label = QLabel(self.tr('Status / Warnings:'))
@@ -278,7 +287,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.messages, 5, 0, 5, 3)
 
         layout.addWidget(self.upload_btn, 15, 2)
-        layout.addWidget(self.updateBootloader_btn, 15, 0)
+        layout.addWidget(self.uploadBoth_btn, 15, 0)
+        #layout.addWidget(self.updateBootloader_btn, 15, 0)
 
         widget = QWidget()
         widget.setLayout(layout)
@@ -377,6 +387,11 @@ class MainWindow(QMainWindow):
 
         # re-enable the UX
         self.disable_interface(False)
+
+        if(action_type == AUxArtemisBurnBootloader.ACTION_ID):
+            if(status == 0):
+                self.on_upload_btn_pressed()#if we uploaded the bootloader, kick off the firmware update.
+
 
         # update the status message
         msg = "" # if status == 0 else "with an error"
@@ -561,7 +576,8 @@ class MainWindow(QMainWindow):
         #
         # Note - the job is defined with the ID of the target action
         theJob = AxJob(AUxArtemisUploadFirmware.ACTION_ID,
-                       {"port": self.port, "baud": self.baudRate, "file": fmwFile})
+                       {"port": self.port, "baud": 921600, "file": fmwFile})
+                       #{"port": self.port, "baud": self.baudRate, "file": fmwFile})
 
         # Send the job to the worker to process
         job_id = self._worker.add_job(theJob)
@@ -585,12 +601,14 @@ class MainWindow(QMainWindow):
         # Make up a job and add it to the job queue. The worker thread will pick this up and
         # process the job. Can set job values using dictionary syntax, or attribute assignments
         theJob = AxJob(AUxArtemisBurnBootloader.ACTION_ID,
-                       {"port": self.port, "baud": self.baudRate, "file": blFile})
+                       {"port": self.port, "baud": 115200, "file": blFile})
+                 #      {"port": self.port, "baud": self.baudRate, "file": blFile})
 
         # Send the job to the worker to process
         job_id = self._worker.add_job(theJob)
 
         self.disable_interface(True)
+
 
     # --------------------------------------------------------------
     def on_browse_btn_pressed(self) -> None:
